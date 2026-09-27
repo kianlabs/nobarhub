@@ -6,7 +6,7 @@ interface TrailerPlayerProps {
 }
 
 export function TrailerPlayer({ videos, title }: TrailerPlayerProps) {
-  // Filter video YouTube: prioritaskan trailer resmi, fallback ke trailer youtube apa pun, lalu video youtube apa pun
+  // Filter video YouTube: prioritaskan trailer official, fallback ke trailer youtube apa pun, lalu video youtube apa pun
   const youtubeVideos = (videos || []).filter(
     (v) => v.site && v.site.toLowerCase() === "youtube" && Boolean(v.key)
   );
@@ -46,10 +46,10 @@ export function TrailerPlayer({ videos, title }: TrailerPlayerProps) {
           </svg>
         </div>
         <h3 className="text-base font-semibold text-zinc-300">
-          Trailer resmi belum tersedia untuk film ini.
+          Trailer belum tersedia untuk film ini.
         </h3>
         <p className="text-sm text-zinc-500 max-w-md">
-          Kami belum menemukan trailer resmi YouTube dari TMDB untuk film ini. Tonton film full akan segera hadir di platform resmi.
+          Kami belum menemukan trailer YouTube dari TMDB untuk film ini. Tonton film full akan segera hadir.
         </p>
       </div>
     );
@@ -61,14 +61,14 @@ export function TrailerPlayer({ videos, title }: TrailerPlayerProps) {
       <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950 shadow-2xl shadow-black/80">
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${trailer.key}?rel=0&modestbranding=1`}
-          title={`Trailer resmi ${title}`}
+          title={`Trailer ${title}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           className="absolute inset-0 h-full w-full border-0"
         />
       </div>
 
-      {/* Legal Disclaimer Banner */}
+      {/* Disclaimer Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-zinc-800/80 bg-zinc-900/60 px-4 py-3 text-xs text-zinc-400 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <svg
@@ -86,7 +86,7 @@ export function TrailerPlayer({ videos, title }: TrailerPlayerProps) {
             />
           </svg>
           <span>
-            Trailer Resmi disediakan melalui YouTube embed TMDB. Tonton Film Full — Segera Hadir di platform resmi.
+            Trailer disediakan melalui YouTube embed TMDB. Tonton Film Full — Segera Hadir.
           </span>
         </div>
         <span className="inline-flex items-center self-start sm:self-auto rounded-full bg-red-950/60 px-2.5 py-0.5 text-[11px] font-semibold text-red-400 border border-red-800/40">

@@ -8,6 +8,7 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['100.123.112.42'],
   images: {
     remotePatterns: [
       {

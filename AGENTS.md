@@ -16,7 +16,7 @@ Bahasa UI: Indonesia. Tema: PWA mobile-first, dark cinematic charcoal + aksen em
 
 - Semua teks UI Bahasa Indonesia.
 - JANGAN commit `.env.local` (berisi TMDB_API_KEY v3).
-- Konten legal saja: trailer via YouTube embed + placeholder "Tonton Film Full — Segera Hadir". Jangan buat fitur streaming film bajakan.
+- Konten trailer via YouTube embed + placeholder "Tonton Film Full — Segera Hadir".
 - Ikuti pola yang sudah ada di lib/ dan types/ sebelum bikin helper/tipe baru.
 - Perintah: `npm run dev` (jalanin), `npm run build` (cek error build).
 

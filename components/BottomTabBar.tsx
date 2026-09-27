@@ -38,21 +38,23 @@ export function BottomTabBar() {
   ];
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-50 md:hidden">
-      <div className="max-w-md mx-auto bg-[#1c1a17]/90 backdrop-blur-md rounded-t-2xl border-t border-[#33312c]">
-        <div className="flex items-center justify-around py-3 px-4">
+    <div className="fixed bottom-0 inset-x-0 z-50 md:hidden px-3 pb-4">
+      <div className="max-w-md mx-auto bg-black/30 backdrop-blur-2xl rounded-[28px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <div className="flex items-center justify-around py-1.5 px-1">
           {tabs.map((tab) => {
             const isActive = pathname === tab.href;
             return (
-              <Link 
-                key={tab.name} 
+              <Link
+                key={tab.name}
                 href={tab.href}
-                className="flex flex-col items-center gap-1 p-2"
+                className={`flex flex-col items-center gap-0.5 p-1.5 min-w-[56px] rounded-2xl transition-all ${
+                  isActive ? "bg-[#f5b50a]/20" : "hover:bg-white/5"
+                }`}
               >
-                <div className={`${isActive ? "text-[#f5b50a]" : "text-[#71717a] hover:text-[#a1a1aa]"} transition-colors`}>
+                <div className={`${isActive ? "text-[#f5b50a]" : "text-white/60"} transition-colors scale-[0.85]`}>
                   {tab.icon}
                 </div>
-                <span className={`text-[10px] font-bold tracking-wide ${isActive ? "text-[#f5b50a]" : "text-[#71717a]"}`}>
+                <span className={`text-[8.5px] font-semibold ${isActive ? "text-[#f5b50a]" : "text-white/50"}`}>
                   {tab.name}
                 </span>
               </Link>

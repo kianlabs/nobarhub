@@ -1,7 +1,7 @@
 ---
-version: 1.0.0
-name: NobarHub Final PWA
-description: Desain mobile-first (PWA) dengan tema dark cinematic charcoal dan aksen emas.
+version: 2.0.0
+name: NobarHub PWA
+description: Desain mobile-first (PWA) dengan tema dark cinematic dan glassmorphism. Hero besar dengan film unggulan, trending section, dan floating navigation.
 colors:
   background: '#121110'
   surface: '#1c1a17'
@@ -15,6 +15,8 @@ colors:
   textSecondary: '#a1a1aa'
   textMuted: '#71717a'
   textDisabled: '#52525b'
+  glassDark: 'rgba(0, 0, 0, 0.3)'
+  glassLight: 'rgba(255, 255, 255, 0.1)'
 typography:
   display:
     fontFamily: Plus Jakarta Sans
@@ -158,37 +160,42 @@ Desain PWA menghindari antarmuka web tradisional seperti Top Navbar statis atau 
 
 ## Layout & Mobile-First Constraints
 
-- **App Shell Container:** Menggunakan container sempit `max-w-md mx-auto` di layar desktop agar terasa seperti mobile app, dengan background charcoal penuh di sekitarnya.
-- **Grid Poster (Katalog):** 3 kolom poster (`grid-cols-3`) pada perangkat mobile, dengan jarak (gap) `sm` (8px).
-- **Row Horizontal:** Daftar trending / populer menggunakan row yang bisa di-scroll secara horizontal (`overflow-x-auto snap-x`).
+- **App Shell:** Full-width layout untuk hero dan trending
+- **Max Container:** `max-w-7xl mx-auto` untuk content area di desktop
+- **Glassmorphism Navigation:** Floating top & bottom nav dengan backdrop blur kuat
+- **Hero:** 85vh height, backdrop full-screen dengan gradient overlay
+- **Trending:** Horizontal scroll dengan snap-x, card width 140px
 
 ## Core UI Components
 
-### 1. Hero Backdrop Full-Bleed
-Hero tidak berada di dalam container dengan padding. Backdrop film harus **full-bleed sampai ujung bawah layar mobile**.
-- **Wajib:** Menggunakan *gradient overlay* gelap (hitam/charcoal transparan) di bagian ATAS (untuk visibilitas kata NobarHub dan ikon) dan BAWAH (untuk keterbacaan judul film dan CTA tombol play).
+### 1. Hero Section
+Hero menampilkan satu film unggulan dengan backdrop full-screen, info lengkap (judul, rating, durasi, genre), dan tombol aksi.
+- **Backdrop:** Full-screen dengan gradient overlay gelap untuk keterbacaan
+- **Info Film:** Judul besar, metadata (rating, tahun, durasi, genre), tombol "Tonton Trailer" + "Watchlist"
+- **Trending Section:** Horizontal scroll card poster di bawah hero
 
-### 2. Navigasi (PWA-First)
-- **Header Transparan Melayang:** Terletak di atas overlay Hero, hanya berisi Wordmark "NobarHub", ikon Pencarian, dan ikon Lonceng (Notifikasi). Tanpa background warna solid (bukan top navbar 64px).
-- **Bottom Tab Bar:** Terletak `fixed bottom-0`. Berisi 4 tab utama: **Beranda**, **Cari**, **Watchlist**, dan **Profil**. Tab aktif berwarna Emas (`#f5b50a`).
+### 2. Navigasi (Glassmorphism)
+- **Top Nav (Floating):** Background hitam 30% dengan backdrop-blur-2xl, rounded-2xl, border putih tipis. Logo NOBARHUB + icon search & notifikasi. Floating dengan padding dari atas.
+- **Bottom Tab Bar (Floating):** Background hitam 30% dengan backdrop-blur-2xl, rounded-[28px], border putih tipis. 4 tab: Beranda, Cari, Watchlist, Profil. Tab aktif highlight kuning emas 20%. Floating dengan padding dari bawah dan samping.
 
 ### 3. PWA Install Banner
-Banner warna Emas (`#f5b50a`) dengan teks gelap yang terletak melayang tepat di atas Bottom Tab Bar. Menampilkan tulisan "Pasang NobarHub ke Layar Utama • Pasang".
+Banner kuning emas (#f5b50a) dengan teks hitam, rounded-2xl, shadow kuat. Posisi di bawah top nav (top-16). Menampilkan "Pasang NOBARHUB ke Layar Utama" + tombol "Pasang" + close button. Animasi slideDown smooth. Auto-hide setelah dismiss atau install, reset setelah 7 hari.
 
 ### 4. Movie Card & Trailer Player
-- **Poster Card:** Memiliki *aspect ratio* 2:3. Menampilkan judul film di bawah poster. Pada hero atau banner khusus, dapat memiliki ikon tombol "Play" (overlay bulat transparan).
-- **Modal Trailer Player:** Ketika ditekan, trailer memutar video embed resmi (YouTube). Modal player memiliki pesan peringatan yang jelas: **"Tonton Film Full — Segera Hadir"**. NobarHub 100% legal dan bebas dari tayangan bajakan.
+- **Poster Card:** Aspect ratio 2:3, rounded-lg, hover scale 105%
+- **Modal Trailer Player:** Ketika ditekan, trailer memutar video embed (YouTube). Modal player memiliki pesan: **"Tonton Film Full — Segera Hadir"**.
 
 ## Do's and Don'ts
 
 ### Do
-- Gunakan gradient overlay gelap di atas gambar backdrop agar teks tetap dapat dibaca.
-- Jadikan aplikasi terasa seperti *Native Mobile App* dengan Bottom Tab Bar dan interaksi sentuhan (swipe/scroll horizontal).
-- Gunakan warna emas (`#f5b50a`) sebagai call-to-action tunggal yang jelas.
-- Pastikan semua label UI menggunakan Bahasa Indonesia yang natural.
+- Gunakan glassmorphism (backdrop-blur-2xl + background hitam/putih transparan) untuk navigasi
+- Gunakan gradient overlay gelap di atas gambar backdrop agar teks tetap dapat dibaca
+- Floating navigation dengan padding dan rounded untuk feel modern
+- Gunakan warna emas (#f5b50a) sebagai accent color untuk CTA dan active state
+- Pastikan semua label UI menggunakan Bahasa Indonesia yang natural dan tidak terlalu formal
 
 ### Don't
-- **Jangan** gunakan Top Navbar konvensional (64px solid) sebagai navigasi utama.
-- **Jangan** gunakan warna gradient yang berat atau berwarna-warni selain dari gradient shadow/overlay (transparan ke hitam) untuk keterbacaan.
-- **Jangan** gunakan warna emas sembarangan untuk background elemen besar (kecuali banner PWA).
-- **Jangan** memberi kesan tersedianya akses nonton film bajakan. Selalu perjelas bahwa tayangan adalah trailer resmi.
+- Jangan gunakan Top Navbar solid penuh layar
+- Jangan gunakan warna gradient yang berat atau berwarna-warni
+- Jangan gunakan warna emas untuk background elemen besar (kecuali banner PWA)
+- Jangan gunakan kata-kata formal seperti "resmi", "legal" yang kedengeran AI

@@ -79,7 +79,7 @@ export default function ProfilPage() {
           <h3 className="text-lg font-bold text-white">Tentang NobarHub</h3>
           <div className="bg-[#1c1a17] border border-[#33312c] rounded-xl p-4 space-y-2">
             <p className="text-sm text-[#a1a1aa] leading-relaxed">
-              Katalog film 100% legal — hanya memutar trailer resmi YouTube.
+              Katalog film dengan trailer dari YouTube.
             </p>
             <p className="text-sm font-medium text-[#71717a]">
               Versi 0.1.0 (MVP)

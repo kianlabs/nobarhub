@@ -33,7 +33,7 @@ export async function generateMetadata({
     const title = `${movie.title} — NobarHub`;
     const description =
       movie.overview ||
-      `Detail lengkap, sinopsis, dan trailer resmi film ${movie.title} di NobarHub.`;
+      `Detail lengkap, sinopsis, dan trailer film ${movie.title} di NobarHub.`;
 
     const ogImages = movie.backdrop_path
       ? [{ url: posterUrl(movie.backdrop_path, "w1280") }]
@@ -230,7 +230,7 @@ export default async function MovieDetailPage({ params }: MoviePageProps) {
                   <span>Tonton Trailer</span>
                 </a>
 
-                {/* Legal Streaming Service Roadmap Placeholder */}
+                {/* Streaming Placeholder */}
                 <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 text-sm">
                   <span className="font-medium">Tonton Film Full — Segera Hadir</span>
                 </div>
@@ -248,17 +248,17 @@ export default async function MovieDetailPage({ params }: MoviePageProps) {
             </div>
           </div>
 
-          {/* Bagian Trailer Resmi */}
+          {/* Bagian Trailer */}
           <section id="trailer" className="mt-16 scroll-mt-24 space-y-4">
             <div className="border-b border-zinc-800 pb-3">
               <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                <span>Trailer Resmi</span>
+                <span>Trailer</span>
                 <span className="text-xs font-normal text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-700/50">
                   YouTube Embed
                 </span>
               </h2>
               <p className="text-sm text-zinc-400 mt-1">
-                Tonton cuplikan dan trailer resmi dari film &ldquo;{movie.title}&rdquo;.
+                Tonton cuplikan dan trailer dari film &ldquo;{movie.title}&rdquo;.
               </p>
             </div>
 
@@ -294,7 +294,7 @@ export default async function MovieDetailPage({ params }: MoviePageProps) {
       <footer className="border-t border-zinc-800 bg-[#09090b] py-8 text-center text-sm text-zinc-500">
         <p>© {new Date().getFullYear()} NobarHub. Data film disediakan oleh TMDB API.</p>
         <p className="mt-1 text-xs text-zinc-600">
-          Trailer resmi melalui YouTube embed legal. Tidak menyediakan konten bajakan.
+          Trailer melalui YouTube embed. Tidak menyediakan konten bajakan.
         </p>
       </footer>
     </div>
