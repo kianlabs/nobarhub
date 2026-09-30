@@ -1,20 +1,63 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MovieDetail } from "@/types";
+import { MovieDetail, Video } from "@/types";
 import { backdropUrl } from "@/lib/tmdb";
 import { motion } from "framer-motion";
+import { TrailerModal } from "@/components/TrailerModal";
+import { useIsInWatchlist, toggleWatchlistStorage } from "@/lib/watchlist";
 
 export function HeroSection({ movie }: { movie: MovieDetail }) {
-  const ratingLabel = movie.vote_average >= 8 ? "Sangat Bagus" : movie.vote_average >= 6 ? "Bagus" : "Cukup";
+  const isWatchlist = useIsInWatchlist(movie.id);
+  const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+  const [trailer, setTrailer] = useState<Video | null | undefined>(undefined);
+  const [isLoadingTrailer, setIsLoadingTrailer] = useState(false);
+  const toggleWatchlist = () => {
+    toggleWatchlistStorage(movie.id, movie);
+  };
+
+  const openTrailer = async () => {
+    setIsTrailerOpen(true);
+    document.body.style.overflow = "hidden";
+    if (trailer === undefined) {
+      setIsLoadingTrailer(true);
+      try {
+        const res = await fetch(`/api/movies/${movie.id}/videos`);
+        if (res.ok) {
+          const data = await res.json();
+          setTrailer(data.video || null);
+        } else {
+          setTrailer(null);
+        }
+      } catch {
+        setTrailer(null);
+      } finally {
+        setIsLoadingTrailer(false);
+      }
+    }
+  };
+
+  const closeTrailer = () => {
+    setIsTrailerOpen(false);
+    document.body.style.overflow = "";
+  };
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   const runtimeText = movie.runtime ? `${Math.floor(movie.runtime / 60)} jam ${movie.runtime % 60} menit` : "";
   const genresText = movie.genres?.slice(0, 2).map(g => g.name).join(", ") || "";
-  const voteCountText = movie.vote_average
-    ? `${(movie.vote_average * 12.4).toFixed(0)}rb ulasan`
+  const voteCountText = movie.vote_count
+    ? movie.vote_count >= 1000
+      ? `${(movie.vote_count / 1000).toFixed(1)}rb ulasan`
+      : `${movie.vote_count} ulasan`
     : "";
   const year = movie.release_date?.slice(0, 4) || "";
-
   return (
     <section className="relative w-full h-[85vh] min-h-[600px] max-h-[800px] overflow-hidden">
       {/* Background Image */}
@@ -47,7 +90,9 @@ export function HeroSection({ movie }: { movie: MovieDetail }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {movie.title}
+            <Link href={`/film/${movie.id}`} className="hover:text-[#f5b50a] transition-colors">
+              {movie.title}
+            </Link>
           </motion.h1>
 
           {/* Meta Info */}
@@ -93,33 +138,70 @@ export function HeroSection({ movie }: { movie: MovieDetail }) {
 
           {/* Action Buttons */}
           <motion.div
-            className="flex gap-3 mb-4"
+            className="flex flex-wrap items-center gap-3 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Link
-              href={`/film/${movie.id}`}
-              className="flex-1 max-w-[200px] bg-[#f5b50a] text-[#121110] px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#ffd700] transition-all hover:scale-105"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
-              </svg>
-              Tonton Trailer
-            </Link>
             <motion.button
-              className="px-6 py-3 border-2 border-white/40 text-white rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+              type="button"
+              onClick={openTrailer}
+              aria-label="Tonton Trailer"
+              className="flex-1 max-w-[200px] min-w-[140px] bg-[#f5b50a] text-[#121110] px-6 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#d49b08] active:bg-[#b48307] transition-all cursor-pointer shadow-lg"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+              </svg>
+              <span>Tonton Trailer</span>
+            </motion.button>
+
+            <motion.button
+              type="button"
+              onClick={toggleWatchlist}
+              aria-label={isWatchlist ? "Hapus dari Watchlist" : "Tambah ke Watchlist"}
+              className={`px-6 py-3 border-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                isWatchlist
+                  ? "bg-[#f5b50a] border-[#f5b50a] text-[#121110] hover:bg-[#d49b08]"
+                  : "border-white/40 text-white hover:bg-white/10 hover:border-white/60"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill={isWatchlist ? "currentColor" : "none"}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2.5"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
               </svg>
-              Watchlist
+              <span>{isWatchlist ? "Tersimpan" : "Watchlist"}</span>
             </motion.button>
+
+            <Link
+              href={`/film/${movie.id}`}
+              aria-label={`Lihat detail film ${movie.title}`}
+              className="px-4 py-3 rounded-lg text-white/80 hover:text-white font-medium text-sm flex items-center justify-center gap-1.5 hover:bg-white/10 transition-colors"
+            >
+              <span>Detail Film</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </motion.div>
         </div>
       </div>
+
+      <TrailerModal
+        isOpen={isTrailerOpen}
+        onClose={closeTrailer}
+        title={movie.title}
+        trailer={trailer}
+        isLoading={isLoadingTrailer}
+      />
     </section>
   );
 }

@@ -1,46 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { Movie } from "@/types";
-import { fetchVideos } from "@/lib/tmdb";
+import { useState } from "react";
+import type { Movie, Video } from "@/types";
 import { TrailerModal } from "@/components/TrailerModal";
-import type { Video } from "@/types";
+import { useIsInWatchlist, toggleWatchlistStorage } from "@/lib/watchlist";
 
 export function HeroActions({ movie }: { movie: Movie }) {
-  const [isWatchlist, setIsWatchlist] = useState(false);
+  const isWatchlist = useIsInWatchlist(movie.id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [trailer, setTrailer] = useState<Video | null | undefined>(undefined);
   const [isLoadingTrailer, setIsLoadingTrailer] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("nobarhub-watchlist");
-    if (saved) {
-      try {
-        const ids = JSON.parse(saved);
-        if (ids.includes(movie.id)) {
-          setIsWatchlist(true);
-        }
-      } catch (e) {}
-    }
-  }, [movie.id]);
-
   const toggleWatchlist = () => {
-    const saved = localStorage.getItem("nobarhub-watchlist");
-    let ids: number[] = [];
-    if (saved) {
-      try {
-        ids = JSON.parse(saved);
-      } catch (e) {}
-    }
-
-    if (ids.includes(movie.id)) {
-      ids = ids.filter((id) => id !== movie.id);
-      setIsWatchlist(false);
-    } else {
-      ids.push(movie.id);
-      setIsWatchlist(true);
-    }
-    localStorage.setItem("nobarhub-watchlist", JSON.stringify(ids));
+    toggleWatchlistStorage(movie.id, movie);
   };
 
   const openTrailer = async () => {
@@ -48,9 +19,19 @@ export function HeroActions({ movie }: { movie: Movie }) {
     document.body.style.overflow = "hidden";
     if (trailer === undefined) {
       setIsLoadingTrailer(true);
-      const v = await fetchVideos(movie.id);
-      setTrailer(v);
-      setIsLoadingTrailer(false);
+      try {
+        const res = await fetch(`/api/movies/${movie.id}/videos`);
+        if (res.ok) {
+          const data = await res.json();
+          setTrailer(data.video ?? null);
+        } else {
+          setTrailer(null);
+        }
+      } catch {
+        setTrailer(null);
+      } finally {
+        setIsLoadingTrailer(false);
+      }
     }
   };
 
@@ -71,6 +52,7 @@ export function HeroActions({ movie }: { movie: Movie }) {
         </button>
         <button 
           onClick={toggleWatchlist}
+          aria-label={isWatchlist ? "Hapus dari Watchlist" : "Tambah ke Watchlist"}
           className={`flex-1 border-2 font-bold py-[10px] rounded-lg flex items-center justify-center gap-2 transition-colors ${
             isWatchlist 
               ? "border-[#f5b50a] bg-[#f5b50a]/20 text-[#f5b50a]" 

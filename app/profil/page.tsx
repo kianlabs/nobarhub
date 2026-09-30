@@ -1,31 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { TopNavbar } from "@/components/TopNavbar";
 import { BottomTabBar } from "@/components/BottomTabBar";
+import { useWatchlistIds, clearWatchlistStorage } from "@/lib/watchlist";
 
 export default function ProfilPage() {
-  const [watchlistCount, setWatchlistCount] = useState(0);
-
-  useEffect(() => {
-    const loadCount = () => {
-      const saved = localStorage.getItem("nobarhub-watchlist");
-      if (saved) {
-        try {
-          const ids = JSON.parse(saved);
-          setWatchlistCount(ids.length);
-        } catch (e) {}
-      }
-    };
-    loadCount();
-  }, []);
+  const watchlistIds = useWatchlistIds();
+  const watchlistCount = watchlistIds.length;
 
   const handleClearWatchlist = () => {
     if (watchlistCount === 0) return;
     
     if (window.confirm("Yakin hapus semua watchlist?")) {
-      localStorage.setItem("nobarhub-watchlist", "[]");
-      setWatchlistCount(0);
+      clearWatchlistStorage();
       alert("Watchlist berhasil dihapus.");
     }
   };

@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 
+interface NavigatorStandalone extends Navigator {
+  standalone?: boolean;
+}
+
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -13,15 +17,19 @@ export function PWAInstallBanner() {
 
   useEffect(() => {
     // Cek apakah sudah standalone (sudah diinstall)
-    const isStandalone = window.matchMedia("(display-mode: standalone)").matches ||
-                         (window.navigator as any).standalone === true;
+    const nav = window.navigator as NavigatorStandalone;
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      nav.standalone === true;
 
     if (isStandalone) {
       return; // Sudah diinstall, jangan tampilkan banner
     }
 
-    // Selalu tampilkan banner
-    setShowBanner(true);
+    // Tampilkan banner secara asinkron agar tidak memicu synchronous setState di body effect
+    const timer = setTimeout(() => {
+      setShowBanner(true);
+    }, 0);
 
     // Listen untuk beforeinstallprompt event
     const handler = (e: Event) => {
@@ -33,7 +41,10 @@ export function PWAInstallBanner() {
 
     window.addEventListener("beforeinstallprompt", handler);
 
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
   }, []);
 
   const handleInstall = async () => {
@@ -61,7 +72,6 @@ export function PWAInstallBanner() {
 
   const handleClose = () => {
     setShowBanner(false);
-    // Tidak simpan ke localStorage, jadi akan muncul lagi next visit
   };
 
   if (!showBanner) return null;

@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/movie/:id",
+        destination: "/film/:id",
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config, { dev }) => {
     if (dev) {
       const ignored = config.watchOptions?.ignored;

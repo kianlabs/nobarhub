@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { TopNavbar } from "@/components/TopNavbar";
 import { BottomTabBar } from "@/components/BottomTabBar";
 
@@ -13,9 +14,20 @@ export default function OfflinePage() {
         <p className="text-[#a1a1aa] mb-6 max-w-sm">
           Periksa koneksi internet Anda untuk kembali menjelajahi NobarHub. Beberapa halaman yang pernah Anda buka mungkin masih bisa diakses.
         </p>
-        <button onClick={() => window.location.reload()} className="bg-[#f5b50a] text-[#121110] font-bold px-6 py-2 rounded-lg hover:bg-[#d49b08] transition-colors">
-          Coba Lagi
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-[#f5b50a] text-[#121110] font-bold px-6 py-2.5 rounded-xl hover:bg-[#d49b08] active:scale-95 transition-all text-sm shadow-md"
+          >
+            Coba Lagi
+          </button>
+          <Link
+            href="/watchlist"
+            className="bg-[#1c1a17] text-white border border-[#33312c] font-semibold px-5 py-2.5 rounded-xl hover:bg-[#262420] active:scale-95 transition-all text-sm"
+          >
+            Buka Watchlist Tersimpan
+          </Link>
+        </div>
       </div>
       <BottomTabBar />
     </div>

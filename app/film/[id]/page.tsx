@@ -2,8 +2,11 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getMovieDetail, getSimilar, posterUrl, backdropUrl } from "@/lib/tmdb";
+import { getMovieDetail, getSimilar, getMovieCredits, posterUrl, backdropUrl } from "@/lib/tmdb";
+import type { Genre } from "@/types";
 import { HeroActions } from "@/components/HeroActions";
+import { ShareButton } from "@/components/ShareButton";
+import { CastSection } from "@/components/CastSection";
 import { TopNavbar } from "@/components/TopNavbar";
 import { BottomTabBar } from "@/components/BottomTabBar";
 import { InteractiveMovieCard } from "@/components/InteractiveMovieCard";
@@ -16,11 +19,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   try {
     const movie = await getMovieDetail(Number(id));
+    const pstUrl = posterUrl(movie.poster_path, "w780");
+    const desc = movie.overview || `Informasi tentang film ${movie.title} di NobarHub.`;
     return {
       title: `${movie.title} — NobarHub`,
-      description: movie.overview || `Informasi tentang film ${movie.title}.`,
+      description: desc,
+      openGraph: {
+        title: `${movie.title} — NobarHub`,
+        description: desc,
+        images: movie.poster_path ? [{ url: pstUrl, width: 780, height: 1170, alt: movie.title }] : [],
+        type: "video.movie",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${movie.title} — NobarHub`,
+        description: desc,
+        images: movie.poster_path ? [pstUrl] : [],
+      },
     };
-  } catch (e) {
+  } catch {
     return { title: "Film Tidak Ditemukan — NobarHub" };
   }
 }
@@ -33,12 +50,14 @@ export default async function FilmDetailPage({ params }: Props) {
 
   let movie;
   let similarData;
+  let credits;
   try {
-    [movie, similarData] = await Promise.all([
+    [movie, similarData, credits] = await Promise.all([
       getMovieDetail(movieId),
       getSimilar(movieId).catch(() => ({ results: [] })),
+      getMovieCredits(movieId).catch(() => ({ id: movieId, cast: [] })),
     ]);
-  } catch (error) {
+  } catch {
     return notFound();
   }
 
@@ -55,7 +74,7 @@ export default async function FilmDetailPage({ params }: Props) {
       
       {/* Floating Back Button (Mobile only, Desktop uses TopNavbar usually) */}
       <div className="fixed top-4 left-4 z-50 md:hidden">
-        <Link href="/" className="flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-md text-white border border-[#33312c]">
+        <Link href="/" aria-label="Kembali ke Beranda" className="flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-md text-white border border-[#33312c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b50a]">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
         </Link>
       </div>
@@ -93,6 +112,20 @@ export default async function FilmDetailPage({ params }: Props) {
 
               <div className="flex flex-wrap items-center gap-2 text-sm md:text-base text-[#a1a1aa] font-medium">
                 <span className="text-[#f5b50a] font-bold">★ {rating}</span>
+                {movie.imdb_id && (
+                  <>
+                    <span>•</span>
+                    <a
+                      href={`https://www.imdb.com/title/${movie.imdb_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#f5c518] hover:bg-[#e2b616] text-black font-black text-xs px-2 py-0.5 rounded inline-flex items-center tracking-wider transition-colors"
+                      title="Lihat di IMDb"
+                    >
+                      IMDb
+                    </a>
+                  </>
+                )}
                 <span>•</span>
                 <span>{year}</span>
                 {runtime && (
@@ -110,7 +143,7 @@ export default async function FilmDetailPage({ params }: Props) {
               </div>
 
               <div className="flex flex-wrap gap-2 pt-1">
-                {movie.genres?.map((g: any) => (
+                {movie.genres?.map((g: Genre) => (
                   <span key={g.id} className="px-3 py-1 bg-[#1c1a17] border border-[#33312c] rounded-full text-xs text-[#d4d4d8] font-medium">
                     {g.name}
                   </span>
@@ -124,13 +157,21 @@ export default async function FilmDetailPage({ params }: Props) {
                 </p>
               </div>
 
-              <div className="pt-4 max-w-md">
-                {/* HeroActions handles Tonton Trailer and Watchlist toggle */}
-                <HeroActions movie={movie} />
+              <div className="pt-4 flex flex-wrap items-center gap-3">
+                <div className="w-full sm:w-auto min-w-[280px] sm:min-w-[320px]">
+                  {/* HeroActions handles Tonton Trailer and Watchlist toggle */}
+                  <HeroActions movie={movie} />
+                </div>
+                <div className="pt-2 w-full sm:w-auto">
+                  <ShareButton title={movie.title} text={`Tonton ${movie.title} di NobarHub`} className="w-full sm:w-auto" />
+                </div>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Cast Section */}
+        <CastSection cast={credits?.cast} />
 
         {/* Similar Movies */}
         {similarData && similarData.results.length > 0 && (

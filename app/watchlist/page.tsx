@@ -1,62 +1,97 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMovieDetail, fetchVideos } from "@/lib/tmdb";
-import type { Movie, Video } from "@/types";
+import type { Movie } from "@/types";
 import { InteractiveMovieCard } from "@/components/InteractiveMovieCard";
 import { TopNavbar } from "@/components/TopNavbar";
 import { BottomTabBar } from "@/components/BottomTabBar";
+import {
+  toggleWatchlistStorage,
+  getCachedWatchlistMovies,
+  cacheWatchlistMovies,
+} from "@/lib/watchlist";
 
 export default function WatchlistPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const loadWatchlist = async () => {
+      const cached = getCachedWatchlistMovies();
       const saved = localStorage.getItem("nobarhub-watchlist");
-      if (!saved) {
+      let ids: number[] = [];
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) ids = parsed;
+        } catch {
+          // ignore
+        }
+      }
+
+      if (ids.length === 0) {
+        if (!isCancelled) {
+          setMovies([]);
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      const validCached = cached.filter((m) => ids.includes(m.id));
+      if (validCached.length > 0 && !isCancelled) {
+        setMovies(validCached);
         setIsLoading(false);
+      }
+
+      const cachedIds = new Set(validCached.map((m) => m.id));
+      const missingIds = ids.filter((id) => !cachedIds.has(id));
+
+      if (missingIds.length === 0) {
+        if (!isCancelled) setIsLoading(false);
         return;
       }
 
       try {
-        const ids: number[] = JSON.parse(saved);
-        if (ids.length === 0) {
-          setIsLoading(false);
-          return;
-        }
-
-        // Fetch all movies in parallel
-        const results = await Promise.all(
-          ids.map(id => getMovieDetail(id).catch(() => null))
+        const fetched = await Promise.all(
+          missingIds.map(async (id) => {
+            try {
+              const res = await fetch(`/api/movies/${id}`);
+              if (!res.ok) return null;
+              return (await res.json()) as Movie;
+            } catch {
+              return null;
+            }
+          })
         );
-        // Filter out nulls
-        setMovies(results.filter(Boolean) as Movie[]);
-      } catch (err) {
-        console.error(err);
+
+        if (!isCancelled) {
+          const validFetched = fetched.filter((m): m is Movie => m !== null);
+          const combined = [...validCached, ...validFetched];
+          setMovies(combined);
+          cacheWatchlistMovies(combined);
+        }
+      } catch (error) {
+        console.error("Gagal menyinkronkan watchlist:", error);
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadWatchlist();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   const handleRemove = (e: React.MouseEvent, id: number) => {
-    e.stopPropagation(); // Prevent opening modal
-    
-    // Update state
-    setMovies(prev => prev.filter(m => m.id !== id));
-    
-    // Update localStorage
-    const saved = localStorage.getItem("nobarhub-watchlist");
-    if (saved) {
-      try {
-        const ids: number[] = JSON.parse(saved);
-        const newIds = ids.filter(i => i !== id);
-        localStorage.setItem("nobarhub-watchlist", JSON.stringify(newIds));
-      } catch (err) {}
-    }
+    e.stopPropagation();
+    setMovies((prev) => prev.filter((m) => m.id !== id));
+    toggleWatchlistStorage(id);
   };
 
   return (
@@ -92,6 +127,7 @@ export default function WatchlistPage() {
                   <button 
                     onClick={(e) => { e.preventDefault(); handleRemove(e, movie.id); }}
                     className="bg-black/60 hover:bg-[#ef4444]/90 text-white p-1.5 rounded-full backdrop-blur-sm transition-colors relative z-10"
+                    aria-label={`Hapus ${movie.title} dari watchlist`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                   </button>

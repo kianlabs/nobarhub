@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
+  --background: #121110;
   --foreground: #fafafa;
 }
 
@@ -49,9 +49,11 @@ html {
 }
 
 /* Custom Scrollbar Utilities */
+.scrollbar-none::-webkit-scrollbar,
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+.scrollbar-none,
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

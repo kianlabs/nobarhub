@@ -1,4 +1,4 @@
-import type { Genre, Movie, MovieDetail, PagedResponse, Video } from "@/types";
+import type { Genre, Movie, MovieDetail, MovieCredits, PagedResponse, Video } from "@/types";
 
 const API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -70,8 +70,13 @@ export const fetchVideos = async (id: number): Promise<Video | null> => {
 export const getSimilar = (id: number): Promise<PagedResponse<Movie>> =>
   tmdb<PagedResponse<Movie>>(`/movie/${id}/similar?language=id-ID`);
 
+export const getMovieCredits = (id: number): Promise<MovieCredits> =>
+  tmdb<MovieCredits>(`/movie/${id}/credits?language=id-ID`);
 export const posterUrl = (path: string | null, size = "w500"): string =>
   path ? `https://image.tmdb.org/t/p/${size}${path}` : "/placeholder.svg";
 
 export const backdropUrl = (path: string | null, size = "w1280"): string =>
   path ? `https://image.tmdb.org/t/p/${size}${path}` : "/placeholder-backdrop.svg";
+
+export const profileUrl = (path: string | null, size = "w185"): string =>
+  path ? `https://image.tmdb.org/t/p/${size}${path}` : "/placeholder.svg";

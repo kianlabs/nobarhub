@@ -7,6 +7,7 @@ export interface Movie {
   release_date: string;
   vote_average: number;
   genre_ids: number[];
+  vote_count?: number;
 }
 
 export interface Genre {
@@ -20,8 +21,21 @@ export interface MovieDetail extends Movie {
   runtime?: number;
   status?: string;
   original_language?: string;
+  imdb_id?: string | null;
 }
 
+export interface CastMember {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+}
+
+export interface MovieCredits {
+  id: number;
+  cast: CastMember[];
+}
 export interface Video {
   id: string;
   key: string;

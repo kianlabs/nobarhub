@@ -23,7 +23,8 @@ export function InteractiveMovieCard({ movie, onClick, actionButton }: Interacti
     <div className="relative flex flex-col gap-2 group">
       <Link
         href={`/film/${movie.id}`}
-        className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-[#1c1a17] focus:outline-none focus:ring-2 focus:ring-[#f5b50a] transition-transform active:scale-95 group/link block"
+        onClick={() => onClick?.(movie)}
+        className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-[#1c1a17] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b50a] transition-transform active:scale-95 group/link block"
       >
         <Image
           src={imageUrl}

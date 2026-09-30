@@ -1,10 +1,9 @@
 import { Suspense } from "react";
-import { fetchTrending, getMovieDetail } from "@/lib/tmdb";
+import { fetchTrending, getMovieDetail, getNowPlaying, getTopRated } from "@/lib/tmdb";
 import { BottomTabBar } from "@/components/BottomTabBar";
 import { TopNavbar } from "@/components/TopNavbar";
 import { HeroSection } from "@/components/HeroSection";
 import { TrendingSection } from "@/components/TrendingSection";
-import { PWAInstallBanner } from "@/components/PWAInstallBanner";
 import { PageTransition } from "@/components/PageTransition";
 
 export const metadata = {
@@ -16,7 +15,6 @@ export default function HomePage() {
   return (
     <PageTransition>
       <div className="bg-[#121110] text-[#fafafa] min-h-screen">
-        <PWAInstallBanner />
         <TopNavbar />
         <Suspense fallback={<LoadingSkeleton />}>
           <HomeContent />
@@ -28,12 +26,17 @@ export default function HomePage() {
 }
 
 async function HomeContent() {
-  const trendingData = await fetchTrending().catch(() => ({ results: [] }));
-  const movies = (trendingData.results ?? [])
-    .filter(m => m.backdrop_path && m.poster_path && m.title)
-    .slice(0, 15);
+  const [trendingData, nowPlayingData, topRatedData] = await Promise.all([
+    fetchTrending().catch(() => ({ results: [] })),
+    getNowPlaying().catch(() => ({ results: [] })),
+    getTopRated().catch(() => ({ results: [] })),
+  ]);
 
-  if (movies.length === 0) {
+  const trendingList = (trendingData.results ?? []).filter(
+    (m) => m.backdrop_path && m.poster_path && m.title
+  );
+
+  if (trendingList.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center text-center px-4">
         <p className="text-[#a1a1aa]">Film belum tersedia. Silakan cek koneksi API TMDB.</p>
@@ -41,8 +44,8 @@ async function HomeContent() {
     );
   }
 
-  // Ambil detail lengkap film pertama untuk hero
-  const featuredMovie = await getMovieDetail(movies[0].id).catch(() => null);
+  // Ambil detail lengkap film trending pertama untuk hero
+  const featuredMovie = await getMovieDetail(trendingList[0].id).catch(() => null);
 
   if (!featuredMovie) {
     return (
@@ -52,12 +55,38 @@ async function HomeContent() {
     );
   }
 
-  const trendingMovies = movies.slice(1, 11); // Ambil 10 film untuk trending section
+  const trendingMovies = trendingList.slice(1, 13);
+  const nowPlayingMovies = (nowPlayingData.results ?? [])
+    .filter((m) => m.poster_path && m.title)
+    .slice(0, 12);
+  const topRatedMovies = (topRatedData.results ?? [])
+    .filter((m) => m.poster_path && m.title)
+    .slice(0, 12);
 
   return (
     <>
       <HeroSection movie={featuredMovie} />
-      <TrendingSection movies={trendingMovies} />
+      <div className="pb-24 md:pb-12 space-y-2">
+        <TrendingSection
+          title="Trending Minggu Ini"
+          movies={trendingMovies}
+          delay={0.1}
+        />
+        {nowPlayingMovies.length > 0 && (
+          <TrendingSection
+            title="Sedang Tayang di Bioskop"
+            movies={nowPlayingMovies}
+            delay={0.2}
+          />
+        )}
+        {topRatedMovies.length > 0 && (
+          <TrendingSection
+            title="Rating Tertinggi Sepanjang Masa"
+            movies={topRatedMovies}
+            delay={0.3}
+          />
+        )}
+      </div>
     </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import type { Video } from "@/types";
 
 interface TrailerModalProps {
@@ -11,10 +12,26 @@ interface TrailerModalProps {
 }
 
 export function TrailerModal({ isOpen, onClose, title, trailer, isLoading }: TrailerModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Trailer: ${title}`}
+    >
       <div 
         className="absolute inset-0 bg-black/90 backdrop-blur-sm"
         onClick={onClose}
@@ -24,7 +41,8 @@ export function TrailerModal({ isOpen, onClose, title, trailer, isLoading }: Tra
           <h3 className="font-bold text-white line-clamp-1">{title}</h3>
           <button 
             onClick={onClose}
-            className="text-[#a1a1aa] hover:text-white p-1"
+            className="text-[#a1a1aa] hover:text-white p-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b50a]"
+            aria-label="Tutup trailer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
