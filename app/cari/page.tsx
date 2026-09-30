@@ -241,6 +241,7 @@ function CariContent({ initialQ }: { initialQ: string }) {
               autoCorrect="off"
               spellCheck={false}
               enterKeyHint="search"
+              className="w-full h-12 md:h-14 pl-12 pr-11 bg-[#1c1a17] text-white placeholder-[#71717a] text-sm md:text-base rounded-2xl border border-[#33312c] focus:outline-none focus:border-[#f5b50a] focus:ring-2 focus:ring-[#f5b50a]/40 transition-all shadow-inner [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
             />
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#a1a1aa]"
