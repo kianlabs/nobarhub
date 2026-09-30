@@ -30,17 +30,17 @@ export function InteractiveMovieCard({ movie, onClick, actionButton }: Interacti
           src={imageUrl}
           alt={movie.title}
           fill
-          sizes="(max-width: 768px) 33vw, (max-width: 1200px) 20vw, 15vw"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
           className="object-cover"
           loading="lazy"
         />
       </Link>
       
       <div>
-        <h3 className="text-zinc-100 font-bold text-xs line-clamp-2">
+        <h3 className="text-zinc-100 font-bold text-xs sm:text-sm line-clamp-1 group-hover/link:text-[#f5b50a] transition-colors">
           {movie.title}
         </h3>
-        <div className="flex items-center text-[#a1a1aa] text-[10px] mt-0.5">
+        <div className="flex items-center text-[#a1a1aa] text-[11px] sm:text-xs mt-0.5">
           <span className="text-[#f5b50a] font-bold mr-1">★</span> {rating}
         </div>
       </div>

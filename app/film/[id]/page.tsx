@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMovieDetail, getSimilar, getMovieCredits, posterUrl, backdropUrl } from "@/lib/tmdb";
 import type { Genre } from "@/types";
 import { HeroActions } from "@/components/HeroActions";
 import { ShareButton } from "@/components/ShareButton";
 import { CastSection } from "@/components/CastSection";
+import { BackButton } from "@/components/BackButton";
 import { TopNavbar } from "@/components/TopNavbar";
 import { BottomTabBar } from "@/components/BottomTabBar";
 import { InteractiveMovieCard } from "@/components/InteractiveMovieCard";
@@ -70,13 +70,11 @@ export default async function FilmDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative overflow-hidden pb-24 md:pb-0">
-      <TopNavbar />
+      <TopNavbar className="hidden md:block" />
       
-      {/* Floating Back Button (Mobile only, Desktop uses TopNavbar usually) */}
+      {/* Floating Back Button (Mobile only, tidak nabrak navbar) */}
       <div className="fixed top-4 left-4 z-50 md:hidden">
-        <Link href="/" aria-label="Kembali ke Beranda" className="flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-md text-white border border-[#33312c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b50a]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
-        </Link>
+        <BackButton />
       </div>
 
       <main className="flex-1 w-full">

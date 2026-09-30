@@ -18,11 +18,11 @@ export default function ProfilPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative shadow-2xl pb-24 md:pb-0 md:pt-16">
-      <TopNavbar />
+    <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative shadow-2xl pb-28 md:pb-12 md:pt-20">
+      <TopNavbar className="hidden md:block" />
       
       {/* Header Mobile Only */}
-      <div className="sticky top-0 md:hidden z-30 bg-[#121110]/90 backdrop-blur-md px-4 py-4 border-b border-[#33312c]">
+      <div className="sticky top-0 md:hidden z-30 bg-[#121110]/95 backdrop-blur-md px-4 py-3.5 border-b border-[#33312c]">
         <h1 className="text-xl font-black text-white tracking-tight">Profil</h1>
       </div>
 

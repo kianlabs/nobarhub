@@ -214,12 +214,12 @@ function CariContent({ initialQ }: { initialQ: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative shadow-2xl pt-20 md:pt-24 pb-24 md:pb-12">
-      <TopNavbar className={isHeaderVisible ? "translate-y-0" : "-translate-y-full"} />
+    <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative shadow-2xl pt-1 md:pt-24 pb-28 md:pb-12">
+      <TopNavbar className={`hidden md:block ${isHeaderVisible ? "translate-y-0" : "-translate-y-full"}`} />
 
       {/* Search Header - Auto hide saat scroll ke bawah agar tidak menghalangi */}
       <div
-        className={`sticky top-16 md:top-20 z-30 bg-[#121110]/95 md:bg-transparent backdrop-blur-md px-4 md:px-8 py-2 md:py-3 border-b border-[#33312c] md:border-none space-y-3 transition-transform duration-300 ease-in-out ${
+        className={`sticky top-0 md:top-20 z-30 bg-[#121110]/95 md:bg-transparent backdrop-blur-md px-4 md:px-8 pt-3 pb-2.5 md:py-3 border-b border-[#33312c] md:border-none space-y-2.5 md:space-y-3 transition-transform duration-300 ease-in-out ${
           isHeaderVisible ? "translate-y-0" : "-translate-y-[380px] pointer-events-none"
         }`}
       >
@@ -450,7 +450,7 @@ function CariContent({ initialQ }: { initialQ: string }) {
         )}
 
         {!isLoading && filteredResults.length > 0 && (
-          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 md:gap-6">
             {filteredResults.map((movie) => (
               <InteractiveMovieCard key={movie.id} movie={movie} />
             ))}

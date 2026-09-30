@@ -59,7 +59,7 @@ export function HeroSection({ movie }: { movie: MovieDetail }) {
     : "";
   const year = movie.release_date?.slice(0, 4) || "";
   return (
-    <section className="relative w-full h-[85vh] min-h-[600px] max-h-[800px] overflow-hidden">
+    <section className="relative w-full h-[75vh] md:h-[85vh] min-h-[480px] md:min-h-[600px] max-h-[800px] overflow-hidden">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0"
@@ -81,11 +81,11 @@ export function HeroSection({ movie }: { movie: MovieDetail }) {
       </motion.div>
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-end px-4 pb-8">
+      <div className="relative z-10 h-full flex flex-col justify-end px-4 pb-6 md:pb-8">
         <div className="max-w-7xl mx-auto w-full">
           {/* Title */}
           <motion.h1
-            className="text-white font-black text-4xl md:text-6xl mb-3 leading-tight drop-shadow-2xl"
+            className="text-white font-black text-3xl sm:text-4xl md:text-6xl mb-2.5 md:mb-3 leading-tight drop-shadow-2xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}

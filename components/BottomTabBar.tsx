@@ -38,7 +38,7 @@ export function BottomTabBar() {
   ];
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-50 md:hidden px-3 pb-4">
+    <div className="fixed bottom-0 inset-x-0 z-50 md:hidden px-3 pb-[max(0.75rem,env(safe-area-inset-bottom,12px))]">
       <nav
         aria-label="Navigasi Bawah"
         className="max-w-md mx-auto bg-black/30 backdrop-blur-2xl rounded-[28px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"

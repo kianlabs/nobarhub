@@ -95,15 +95,19 @@ export default function WatchlistPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative shadow-2xl pb-24 md:pb-0 md:pt-16">
-      <TopNavbar />
+    <div className="min-h-screen bg-[#121110] text-[#fafafa] flex flex-col w-full relative shadow-2xl pb-28 md:pb-12 md:pt-20">
+      <TopNavbar className="hidden md:block" />
       {/* Header */}
-      <div className="sticky top-0 md:static z-30 bg-[#121110]/90 md:bg-transparent backdrop-blur-md px-4 md:px-8 py-4 border-b border-[#33312c] md:border-none">
-        <div className="w-full max-w-7xl mx-auto">
-          <h1 className="text-xl font-black text-white tracking-tight">Watchlist Saya</h1>
+      <div className="sticky top-0 z-30 bg-[#121110]/95 md:bg-transparent backdrop-blur-md px-4 md:px-8 py-3.5 md:py-4 border-b border-[#33312c] md:border-none">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+          <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">Watchlist Saya</h1>
+          {movies.length > 0 && (
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#f5b50a]/15 text-[#f5b50a] border border-[#f5b50a]/30">
+              {movies.length} Film
+            </span>
+          )}
         </div>
       </div>
-
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
         {isLoading ? (
           <div className="text-center py-20 text-[#f5b50a]">
@@ -118,7 +122,7 @@ export default function WatchlistPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 md:gap-6">
             {movies.map(movie => (
               <InteractiveMovieCard 
                 key={movie.id} 
