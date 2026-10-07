@@ -10,6 +10,9 @@ const withSerwist = withSerwistInit({
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['100.123.112.42'],
   images: {
+    // TMDB sudah serve gambar dalam ukuran jadi (w200/w500/w780/original),
+    // jadi optimasi Vercel dimatikan agar tidak makan kuota Image Optimization.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
